@@ -1,70 +1,102 @@
-# Getting Started with Create React App
+# Aviator Crash Game ✈️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Aviator Crash Game** is an exciting and dynamic multiplayer betting game where players test their luck and timing to win big! With a sleek, responsive interface and real-time gameplay powered by cutting-edge technologies, this game offers an engaging experience for users.
 
-## Available Scripts
+## 📞 Contact
 
-In the project directory, you can run:
+For inquiries, collaborations, or support, feel free to reach out:
 
-### `npm start`
+- 🎮 Discord: `cashblaze127`
+- 📱 Telegram: @cashblaze127
+- 💼 LinkedIn: [Keyvel Bitcoin Solana](https://www.linkedin.com/in/keyvel-bitcoin-solana)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🌟 Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🎮 Game Mechanics
 
-### `npm test`
+- **Place Bets**: Choose your bet amount and join the game.
+- **Real-Time Multiplier**: Watch the multiplier increase as the plane takes off.
+- **Cash Out**: Withdraw your winnings before the plane crashes.
+- **Unpredictable Crashes**: Adds excitement and keeps players on edge.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 📈 Core Highlights
 
-### `npm run build`
+- **Real-Time Updates**: Powered by WebSocket for seamless gameplay.
+- **Provably Fair System**: Transparent and verifiable fairness for every round.
+- **User-Friendly UI**: Designed with Tailwind CSS for a smooth, responsive experience.
+- **Leaderboards**: Track top players and compare performances.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🔒 Security & Transparency
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Secure login and gameplay.
+- Provably fair crash algorithm ensures trustworthiness.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🛠️ Tech Stack
 
-### `npm run eject`
+### Frontend
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **React.js**: For building a dynamic and responsive UI.
+- **TypeScript:** Ensures robust and scalable code.
+- **Tailwind CSS**: Provides a sleek and modern design.
+- **Socket.IO**: Enables real-time communication between players and the server.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **Node.js**: High-performance server-side logic.
+- **TypeScript**: For type safety and maintainability.
+- **Socket.IO**: Real-time communication.
+- **MongoDB**: Efficient database for managing user data and game states.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📂 Project Structure
 
-## Learn More
+```
+aviator-crash-game/
+├── aviator-front/
+│   ├── src/
+│   │   ├── @types/
+│   │   ├── components/
+│   │   ├── assets/
+│   │   ├── utils/
+├── aviator-back/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ⚙️ Setup Instructions
 
-### Code Splitting
+### Frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Navigate to the aviator-front directory:
 
-### Analyzing the Bundle Size
+```
+cd aviator-front
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. Install dependencies
 
-### Making a Progressive Web App
+```
+yarn install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+3. Start the development server:
 
-### Advanced Configuration
+```
+npm run dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🎉 How to Play
 
-### Deployment
+- Sign up or log in to your account.
+- Place your bet and wait for the round to begin.
+- Watch the multiplier increase and decide when to cash out.
+- Win big if you cash out before the crash!
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📜 Provably Fair
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Each game round is provably fair, ensuring that the outcome is random and cannot be tampered with.
