@@ -3,7 +3,6 @@ import React from "react";
 // import { useEffect, useState } from "react";
 import AllData from "./all-data";
 import MyBets from "./my-bets";
-import TopHistory from "./top-history";
 import Context, { BettedUserType, UserType } from "../../context";
 
 
@@ -50,7 +49,7 @@ export default function BetsUsers() {
           {headerType === "all" ?
             <AllData setPre={setPre} pre={pre} allData={allData} /> : headerType === "my" ?
               <MyBets /> :
-              <TopHistory />
+              <MyBets />
           }
         </div>
         {/* <div className="bets-footer">
