@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
+import MoonLoader from "react-spinners/MoonLoader";
 import "./bets.scss";
-import * as LoaderSpinner from "react-loader-spinner";
 import { config } from "../../config";
 
 const TopHistory = () => {
@@ -69,18 +69,11 @@ const TopHistory = () => {
       <div className="top-list-wrapper">
         <div className="top-items-list scroll-y h-100">
           {loadingEffect ? (
-            <div className="flex items-center justify-center">
-              <LoaderSpinner.Oval
-                height={35}
-                width={35}
+            <div className="flex items-center justify-center top-14">
+              <MoonLoader
                 color="red"
-                wrapperStyle={{ marginTop: "60px" }}
-                wrapperClass=""
-                visible={true}
-                ariaLabel="oval-loading"
-                secondaryColor="#990000"
-                strokeWidth={3}
-                strokeWidthSecondary={4}
+                size={35}
+                data-testid="loader"
               />
             </div>
           ) : (
