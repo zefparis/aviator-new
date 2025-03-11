@@ -179,16 +179,28 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 			toast.error("Please, set number of rounds");
 		}
 	}
+
 	useEffect(() => {
 		if (betted) {
-			if (autoCashoutState) {
-				if (cashOut < currentSecondNum) {
+			if (state.fautoCashoutState) {
+				if (cashOut < currentTarget) {
 					updateUserBetState({ [`${index}betted`]: false });
 					callCashOut(cashOut, index);
 				}
 			}
 		}
-	}, [currentSecondNum, fbetted, sbetted, state.fautoCashoutState, state.sautoCashoutState, state.userInfo.f.target, state.userInfo.s.target])
+	}, [currentTarget, fbetted, state.fautoCashoutState, state.userInfo.f.target])
+
+	useEffect(() => {
+		if (betted) {
+			if (state.sautoCashoutState) {
+				if (cashOut < currentTarget) {
+					updateUserBetState({ [`${index}betted`]: false });
+					callCashOut(cashOut, index);
+				}
+			}
+		}
+	}, [currentTarget, sbetted, state.sautoCashoutState, state.userInfo.s.target])
 
 	useEffect(() => {
 		setMyBetAmount(betAmount);
