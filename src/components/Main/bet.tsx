@@ -181,7 +181,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 	}
 
 	useEffect(() => {
-		if (betted) {
+		if (fbetted) {
 			if (state.fautoCashoutState) {
 				if (cashOut < currentTarget) {
 					updateUserBetState({ [`${index}betted`]: false });
@@ -192,7 +192,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 	}, [currentTarget, fbetted, state.fautoCashoutState, state.userInfo.f.target])
 
 	useEffect(() => {
-		if (betted) {
+		if (sbetted) {
 			if (state.sautoCashoutState) {
 				if (cashOut < currentTarget) {
 					updateUserBetState({ [`${index}betted`]: false });
