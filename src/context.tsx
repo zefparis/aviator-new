@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { UnityContext } from "react-unity-webgl";
+import { useUnityContext } from "react-unity-webgl";
 import { useLocation } from "react-router";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -97,7 +97,7 @@ interface ContextDataType {
   sdeState: boolean;
   ssingle: boolean;
   sdefaultBetAmount: number;
-  myUnityContext: UnityContext;
+  myUnityContext: any;
 }
 
 interface ContextType extends GameBetLimit, UserStatusType, GameStatusType {
@@ -109,7 +109,7 @@ interface ContextType extends GameBetLimit, UserStatusType, GameStatusType {
   previousHand: UserType[];
   history: number[];
   rechargeState: boolean;
-  myUnityContext: UnityContext;
+  myUnityContext: any;
   currentTarget: number;
   setCurrentTarget(attrs: Partial<number>);
   update(attrs: Partial<ContextDataType>);
@@ -117,12 +117,6 @@ interface ContextType extends GameBetLimit, UserStatusType, GameStatusType {
   updateUserBetState(attrs: Partial<UserStatusType>);
 }
 
-const unityContext = new UnityContext({
-  loaderUrl: "unity/AirCrash.loader.js",
-  dataUrl: "unity/AirCrash.data.unityweb",
-  frameworkUrl: "unity/AirCrash.framework.js.unityweb",
-  codeUrl: "unity/AirCrash.wasm.unityweb",
-});
 
 const init_state = {
   myBets: [],
@@ -167,7 +161,7 @@ const init_state = {
   sdeState: false,
   ssingle: false,
   sdefaultBetAmount: 20,
-  myUnityContext: unityContext,
+  myUnityContext: null,
 } as ContextDataType;
 
 const Context = React.createContext<ContextType>(null!);
@@ -188,6 +182,19 @@ let newState;
 let newBetState;
 
 export const Provider = ({ children }: any) => {
+  const {
+    unityProvider,
+    isLoaded,
+    loadingProgression,
+    sendMessage,
+    addEventListener,
+    removeEventListener,
+  } = useUnityContext({
+    loaderUrl: "unity/AirCrash.loader.js",
+    dataUrl: "unity/AirCrash.data.unityweb",
+    frameworkUrl: "unity/AirCrash.framework.js.unityweb",
+    codeUrl: "unity/AirCrash.wasm.unityweb",
+  });
   const token = new URLSearchParams(useLocation().search).get("cert");
   const [state, setState] = React.useState<ContextDataType>(init_state);
 
@@ -227,26 +234,34 @@ export const Provider = ({ children }: any) => {
     maxBet: 1000,
     minBet: 1,
   });
-  React.useEffect(function () {
-    unityContext.on("GameController", function (message) {
-      if (message === "Ready") {
-        setUnity({
-          currentProgress: 100,
-          unityLoading: true,
-          unityState: true,
-        });
-      }
-    });
-    unityContext.on("progress", (progression) => {
-      const currentProgress = progression * 100;
-      if (progression === 1) {
-        setUnity({ currentProgress, unityLoading: true, unityState: true });
-      } else {
-        setUnity({ currentProgress, unityLoading: false, unityState: false });
-      }
-    });
-    return () => unityContext.removeAllEventListeners();
-  }, []);
+  React.useEffect(
+    function () {
+      const handleGameController = (message: any) => {
+        if (message === "Ready") {
+          setUnity({
+            currentProgress: 100,
+            unityLoading: true,
+            unityState: true,
+          });
+        }
+      };
+      const handleProgress = (progression: any) => {
+        const currentProgress = progression * 100;
+        if (progression === 1) {
+          setUnity({ currentProgress, unityLoading: true, unityState: true });
+        } else {
+          setUnity({ currentProgress, unityLoading: false, unityState: false });
+        }
+      };
+      addEventListener("GameController", handleGameController);
+      addEventListener("progress", handleProgress);
+      return () => {
+        removeEventListener("GameController", handleGameController);
+        removeEventListener("progress", handleProgress);
+      };
+    },
+    [addEventListener, removeEventListener]
+  );
 
   React.useEffect(() => {
     socket.on("connect", () => {
@@ -505,7 +520,10 @@ export const Provider = ({ children }: any) => {
         ...gameState,
         currentTarget,
         rechargeState,
-        myUnityContext: unityContext,
+        myUnityContext: {
+          unityProvider,
+          sendMessage,
+        },
         bettedUsers: [...bettedUsers],
         previousHand: [...previousHand],
         history: [...history],

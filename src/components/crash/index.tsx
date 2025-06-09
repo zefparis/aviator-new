@@ -53,7 +53,7 @@ export default function WebGLStarter() {
 	}, [GameState, unityState])
 
 	React.useEffect(() => {
-		myUnityContext?.send("GameManager", "RequestToken", JSON.stringify({
+		myUnityContext?.sendMessage("GameManager", "RequestToken", JSON.stringify({
 			gameState: flag
 		}));
 		currentFlag = flag;
@@ -62,7 +62,7 @@ export default function WebGLStarter() {
 	return (
 		<div className="crash-container">
 			<div className="canvas">
-				<Unity unityContext={myUnityContext} matchWebGLToCanvasSize={true} />
+				<Unity unityProvider={myUnityContext?.unityProvider} matchWebGLToCanvasSize={true} />
 			</div>
 			<div className="crash-text-container">
 				{GameState === "BET" ? (
