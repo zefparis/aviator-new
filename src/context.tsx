@@ -184,8 +184,6 @@ let newBetState;
 export const Provider = ({ children }: any) => {
   const {
     unityProvider,
-    isLoaded,
-    loadingProgression,
     sendMessage,
     addEventListener,
     removeEventListener,

@@ -18,8 +18,6 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 		fbetted, sbetted,
 		fbetState, sbetState,
 		GameState,
-		currentNum,
-		currentSecondNum,
 		minBet, maxBet,
 		currentTarget,
 		update,
@@ -189,7 +187,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 				}
 			}
 		}
-	}, [currentTarget, fbetted, state.fautoCashoutState, state.userInfo.f.target])
+	}, [currentTarget, fbetted, state.fautoCashoutState, state.userInfo.f.target, cashOut, index, updateUserBetState])
 
 	useEffect(() => {
 		if (sbetted) {
@@ -200,7 +198,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 				}
 			}
 		}
-	}, [currentTarget, sbetted, state.sautoCashoutState, state.userInfo.s.target])
+	}, [currentTarget, sbetted, state.sautoCashoutState, state.userInfo.s.target, cashOut, index, updateUserBetState])
 
 	useEffect(() => {
 		setMyBetAmount(betAmount);
