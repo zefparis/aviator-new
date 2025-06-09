@@ -2,7 +2,7 @@
 import React from "react";
 // import { useCrashContext } from "../Main/context";
 import "./crash.scss";
-import Unity from "react-unity-webgl";
+import { Unity } from "react-unity-webgl";
 import propeller from "../../assets/images/propeller.png"
 import Context from "../../context";
 
