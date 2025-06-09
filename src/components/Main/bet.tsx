@@ -208,9 +208,9 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 		<div className="bet-control">
 			<div className="controls">
 				{index === 'f' ? !add && (
-					<div className="sec-hand-btn add" onClick={() => setAdd(true)}></div>
+					<button aria-label="Add second bet" className="sec-hand-btn add" onClick={() => setAdd(true)}></button>
 				) : add &&
-				<div className="sec-hand-btn minus" onClick={() => setAdd(false)}></div>
+				<button aria-label="Remove second bet" className="sec-hand-btn minus" onClick={() => setAdd(false)}></button>
 				}
 				<div className="navigation">
 					<div className="navigation-switcher">
@@ -231,13 +231,14 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 						<div className="bet-spinner">
 							<div className={`spinner ${betState || betted ? "disabled" : ""}`}>
 								<div className="buttons">
-									<button className="minus" onClick={() => betState || betted ? "" : minus("betAmount")}></button>
+									<button className="minus" onClick={() => minus("betAmount")} disabled={betState || betted} aria-label="Decrease bet amount"></button>
 								</div>
 								<div className="input">
 									{betState || betted ?
-										<input type="number" value={Number(myBetAmount)} readOnly ></input>
+										<input type="number" value={Number(myBetAmount)} readOnly aria-label="Bet amount"></input>
 										:
 										<input type="number" value={Number(myBetAmount)}
+											aria-label="Bet amount"
 											onChange={e => {
 												Number(e.target.value) > maxBet ? update({ ...state, userInfo: { ...state.userInfo, [`${index}`]: { betAmount: maxBet } } }) : Number(e.target.value) < 0 ? update({ ...state, userInfo: { ...state.userInfo, [`${index}`]: { betAmount: 0 } } }) :
 													update({ ...state, userInfo: { ...state.userInfo, [`${index}`]: { betAmount: Number(e.target.value) } } });
@@ -245,7 +246,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 									}
 								</div>
 								<div className="buttons">
-									<button className="plus" onClick={() => betState || betted ? "" : plus("betAmount")}></button>
+									<button className="plus" onClick={() => plus("betAmount")} disabled={betState || betted} aria-label="Increase bet amount"></button>
 								</div>
 							</div>
 						</div>
@@ -329,15 +330,27 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 							</div>
 							<div className="cashout-block">
 								<div className="cashout-switcher">
-									<label className="label">Auto Cash Out</label>
+									<label id={`${index}-auto-cashout-label`} className="label">Auto Cash Out</label>
 									{betted || betState ? (
-										<div className={`input-switch ${autoCashoutState ? "" : "off"}`}>
+										<button
+											aria-labelledby={`${index}-auto-cashout-label`}
+											role="switch"
+											aria-checked={autoCashoutState}
+											disabled
+											className={`input-switch ${autoCashoutState ? "" : "off"}`}
+										>
 											<span className="oval"></span>
-										</div>
+										</button>
 									) : (
-										<div onClick={() => { update({ [`${index}autoCashoutState`]: !autoCashoutState }) }} className={`input-switch ${autoCashoutState ? "" : "off"}`}>
+										<button
+											aria-labelledby={`${index}-auto-cashout-label`}
+											role="switch"
+											aria-checked={autoCashoutState}
+											onClick={() => { update({ [`${index}autoCashoutState`]: !autoCashoutState }) }}
+											className={`input-switch ${autoCashoutState ? "" : "off"}`}
+										>
 											<span className="oval"></span>
-										</div>
+										</button>
 									)}
 								</div>
 								<div className="cashout-snipper-wrapper">
@@ -346,12 +359,13 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 											<div className="input">
 												{autoCashoutState && !betState ? (
 													<input type="number"
+														aria-label="Auto cash out at"
 														onChange={(e) => { update({ ...state, userInfo: { ...state.userInfo, [`${index}`]: { ...state.userInfo[index], target: Number(e.target.value) } } }); setCashOut(Number(e.target.value)) }}
 														value={cashOut}
 														onBlur={(e) => onChangeBlur(Number(e.target.value) || 0, "cashOutAt")}
 													/>
 												) : (
-													<input type="number" value={cashOut.toFixed(2)} readOnly />
+													<input type="number" value={cashOut.toFixed(2)} readOnly aria-label="Auto cash out at" />
 												)}
 											</div>
 											<span className="text">x</span>
@@ -370,7 +384,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 						<div className="modal-content">
 							<div className="modal-header">
 								<span>Auto play options</span>
-								<button className="close" onClick={() => setShowModal(false)}>
+								<button aria-label="Close auto play options" className="close" onClick={() => setShowModal(false)}>
 									<span>x</span>
 								</button>
 							</div>
@@ -397,113 +411,125 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 									</div>
 								</div>
 								<div className="content-part">
-									<div className={`input-switch ${deState ? "" : "off"}`}
+									<button
+										role="switch"
+										aria-checked={deState}
 										onClick={() => {
 											update({ [`${index}deState`]: !deState, [`${index}decrease`]: 0 });
 										}}
+										className={`input-switch ${deState ? "" : "off"}`}
+										aria-labelledby={`${index}-decrease-label`}
 									>
 										<span className="oval"></span>
-									</div>
-									<span className="title">Stop if cash decreases by</span>
+									</button>
+									<span id={`${index}-decrease-label`} className="title">Stop if cash decreases by</span>
 									<div className="spinner">
 										{deState ?
 											<div className="m-spinner">
 												<div className="buttons">
-													<button onClick={() => minus("decrease")} className="minus"></button>
+													<button aria-label="Decrease stop amount" onClick={() => minus("decrease")} className="minus"></button>
 												</div>
 												<div className="input">
-													<input type="number" onChange={(e) => update({ [`${index}decrease`]: Number(e.target.value) })} value={decrease}
+													<input aria-labelledby={`${index}-decrease-label`} type="number" onChange={(e) => update({ [`${index}decrease`]: Number(e.target.value) })} value={decrease}
 														onBlur={(e) => onChangeBlur(Number(e.target.value) || 0, "decrease")}
 													/>
 												</div>
 												<div className="buttons">
-													<button onClick={() => plus("decrease")} className="plus"></button>
+													<button aria-label="Increase stop amount" onClick={() => plus("decrease")} className="plus"></button>
 												</div>
 											</div> :
 											<div className="m-spinner disabled">
 												<div className="buttons">
-													<button disabled className="minus"></button>
+													<button aria-label="Decrease stop amount" disabled className="minus"></button>
 												</div>
 												<div className="input">
-													<input type="number" readOnly value={Number(decrease).toFixed(2)} />
+													<input aria-labelledby={`${index}-decrease-label`} type="number" readOnly value={Number(decrease).toFixed(2)} />
 												</div>
 												<div className="buttons">
-													<button disabled className="plus"></button>
+													<button aria-label="Increase stop amount" disabled className="plus"></button>
 												</div>
 											</div>}
 									</div>
 									<span >INR</span>
 								</div>
 								<div className="content-part">
-									<div className={`input-switch ${inState ? "" : "off"}`}
+									<button
+										role="switch"
+										aria-checked={inState}
 										onClick={() => {
 											update({ [`${index}inState`]: !inState, [`${index}increase`]: 0 });
 										}}
+										className={`input-switch ${inState ? "" : "off"}`}
+										aria-labelledby={`${index}-increase-label`}
 									>
 										<span className="oval"></span>
-									</div>
-									<span className="title">Stop if cash increases by</span>
+									</button>
+									<span id={`${index}-increase-label`} className="title">Stop if cash increases by</span>
 									<div className="spinner">
 										{inState ? <div className="m-spinner">
 											<div className="buttons">
-												<button onClick={() => minus("increase")} className="minus"></button>
+												<button aria-label="Decrease stop amount" onClick={() => minus("increase")} className="minus"></button>
 											</div>
 											<div className="input">
-												<input type="number" onChange={(e) => update({ [`${index}increase`]: Number(e.target.value) })} value={increase}
+												<input aria-labelledby={`${index}-increase-label`} type="number" onChange={(e) => update({ [`${index}increase`]: Number(e.target.value) })} value={increase}
 													onBlur={(e) => onChangeBlur(Number(e.target.value), "increase")}
 												/>
 											</div>
 											<div className="buttons">
-												<button onClick={() => plus("increase")} className="plus"></button>
+												<button aria-label="Increase stop amount" onClick={() => plus("increase")} className="plus"></button>
 											</div>
 										</div> : <div className="m-spinner disabled">
 											<div className="buttons">
-												<button disabled className="minus"></button>
+												<button aria-label="Decrease stop amount" disabled className="minus"></button>
 											</div>
 											<div className="input">
-												<input type="number" readOnly value={Number(increase).toFixed(2)} />
+												<input aria-labelledby={`${index}-increase-label`} type="number" readOnly value={Number(increase).toFixed(2)} />
 											</div>
 											<div className="buttons">
-												<button disabled className="plus"></button>
+												<button aria-label="Increase stop amount" disabled className="plus"></button>
 											</div>
 										</div>}
 									</div>
 									<span >INR</span>
 								</div>
 								<div className="content-part">
-									<div className={`input-switch ${single ? "" : "off"}`}
+									<button
+										role="switch"
+										aria-checked={single}
 										onClick={() => {
 											update({ [`${index}single`]: !single, [`${index}singleAmount`]: 0 });
 										}}
+										className={`input-switch ${single ? "" : "off"}`}
+										aria-labelledby={`${index}-single-win-label`}
 									>
 										<span className="oval"></span>
-									</div>
-									<span className="title">Stop if single win exceeds</span>
+									</button>
+									<span id={`${index}-single-win-label`} className="title">Stop if single win exceeds</span>
 									<div className="spinner">
 										{!!single ?
 											<div className="m-spinner">
 												<div className="buttons">
-													<button onClick={() => minus("singleAmount")} className="minus"></button>
+													<button aria-label="Decrease stop amount" onClick={() => minus("singleAmount")} className="minus"></button>
 												</div>
 												<div className="input">
-													<input type="number" onChange={(e) => update({ [`${index}singleAmount`]: Number(e.target.value) })} value={singleAmount}
+													<input aria-labelledby={`${index}-single-win-label`} type="number" onChange={(e) => update({ [`${index}singleAmount`]: Number(e.target.value) })} value={singleAmount}
 														onBlur={(e) => onChangeBlur(Number(e.target.value), "singleAmount")}
 													/>
 												</div>
 												<div className="buttons">
-													<button onClick={() => plus("singleAmount")} className="plus" ></button>
+													<button aria-label="Increase stop amount" onClick={() => plus("singleAmount")} className="plus" ></button>
 												</div>
 											</div> :
 											<div className="m-spinner disabled">
 												<div className="buttons ">
-													<button disabled className="minus"></button>
+													<button aria-label="Decrease stop amount" disabled className="minus"></button>
 												</div>
 												<div className="input">
 
-													<input type="number" readOnly value={singleAmount.toFixed(2)} />
+													<input aria-labelledby={`${index}-single-win-label`} type="number" readOnly value={singleAmount.toFixed(2)} />
 												</div>
 												<div className="buttons">
-													<button disabled className="plus"></button>
+													<button aria-label="Increase stop amount" disabled className="plus"></button>
 												</div>
 											</div>
 										}
