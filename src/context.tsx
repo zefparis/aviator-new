@@ -122,7 +122,7 @@ const init_state = {
   myBets: [],
   width: 1500,
   userInfo: {
-    balance: 0,
+    balance: 10000,
     userType: false,
     img: "",
     userName: "",
