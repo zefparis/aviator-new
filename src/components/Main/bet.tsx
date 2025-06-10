@@ -9,7 +9,7 @@ interface BetProps {
 	setAdd: any
 }
 type FieldNameType = 'betAmount' | 'decrease' | 'increase' | 'singleAmount'
-type BetOptType = '20' | '50' | '100' | '1000'
+type BetOptType = '500' | '1000' | '2500' | '5000'
 type GameType = 'manual' | 'auto'
 
 const Bet = ({ index, add, setAdd }: BetProps) => {
@@ -39,9 +39,9 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 	const singleAmount = index === 'f' ? state.fsingleAmount : state.ssingleAmount
 
 	const [gameType, setGameType] = React.useState<GameType>("manual");
-	const [betOpt, setBetOpt] = React.useState<BetOptType>("20");
+	const [betOpt, setBetOpt] = React.useState<BetOptType>("500");
 	const [showModal, setShowModal] = React.useState(false);
-	const [myBetAmount, setMyBetAmount] = React.useState(20);
+	const [myBetAmount, setMyBetAmount] = React.useState(500);
 	// const { index } = props;
 
 	const minus = (type: FieldNameType) => {
@@ -253,31 +253,31 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 						{betState || betted ?
 							<div className="bet-opt-list">
 								<button className="bet-opt disabled">
-									<span>20</span>
-								</button>
-								<button className="bet-opt disabled">
-									<span>50</span>
-								</button>
-								<button className="bet-opt disabled">
-									<span>100</span>
+									<span>500</span>
 								</button>
 								<button className="bet-opt disabled">
 									<span>1000</span>
+								</button>
+								<button className="bet-opt disabled">
+									<span>2500</span>
+								</button>
+								<button className="bet-opt disabled">
+									<span>5000</span>
 								</button>
 							</div>
 							:
 							<div className="bet-opt-list">
-								<button onClick={() => manualPlus(20, "20")} className="bet-opt">
-									<span>20</span>
-								</button>
-								<button onClick={() => manualPlus(50, "50")} className="bet-opt">
-									<span>50</span>
-								</button>
-								<button onClick={() => manualPlus(100, "100")} className="bet-opt">
-									<span>100</span>
+								<button onClick={() => manualPlus(500, "500")} className="bet-opt">
+									<span>500</span>
 								</button>
 								<button onClick={() => manualPlus(1000, "1000")} className="bet-opt">
 									<span>1000</span>
+								</button>
+								<button onClick={() => manualPlus(2500, "2500")} className="bet-opt">
+									<span>2500</span>
+								</button>
+								<button onClick={() => manualPlus(5000, "5000")} className="bet-opt">
+									<span>5000</span>
 								</button>
 							</div>
 						}

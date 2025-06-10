@@ -131,7 +131,7 @@ const init_state = {
       betted: false,
       cashouted: false,
       cashAmount: 0,
-      betAmount: 20,
+      betAmount: 500,
       target: 2,
     },
     s: {
@@ -139,7 +139,7 @@ const init_state = {
       betted: false,
       cashouted: false,
       cashAmount: 0,
-      betAmount: 20,
+      betAmount: 500,
       target: 2,
     },
   },
@@ -151,7 +151,7 @@ const init_state = {
   fincrease: 0,
   fdecrease: 0,
   fsingleAmount: 0,
-  fdefaultBetAmount: 20,
+  fdefaultBetAmount: 500,
   sautoCashoutState: false,
   sautoCound: 0,
   sincrease: 0,
@@ -160,7 +160,7 @@ const init_state = {
   sinState: false,
   sdeState: false,
   ssingle: false,
-  sdefaultBetAmount: 20,
+  sdefaultBetAmount: 500,
   myUnityContext: null,
 } as ContextDataType;
 
@@ -225,8 +225,8 @@ export const Provider = ({ children }: any) => {
   };
 
   const [betLimit, setBetLimit] = React.useState<GameBetLimit>({
-    maxBet: 1000,
-    minBet: 1,
+    maxBet: 100000,
+    minBet: 500,
   });
   React.useEffect(
     function () {

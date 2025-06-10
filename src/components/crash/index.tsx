@@ -6,7 +6,6 @@ import { Unity } from "react-unity-webgl";
 import propeller from "../../assets/images/propeller.png"
 import Context from "../../context";
 
-let currentFlag = 0;
 
 export default function WebGLStarter() {
 	const { GameState, currentNum, time, unityState, myUnityContext,setCurrentTarget } = React.useContext(Context)
@@ -27,9 +26,9 @@ export default function WebGLStarter() {
 			const startTime = Date.now() - time;
 			myInterval = setInterval(() => {
 				const newTarget = calculateMultiplier(startTime);
-				if (newTarget > 2 && currentFlag === 2) {
+				if (newTarget > 2 && flag === 2) {
 					setFlag(3);
-				} else if (newTarget > 10 && currentFlag === 3) {
+				} else if (newTarget > 10 && flag === 3) {
 					setFlag(4);
 				}
 				setTarget(newTarget);
@@ -61,7 +60,6 @@ export default function WebGLStarter() {
 		myUnityContext?.sendMessage("GameManager", "RequestToken", JSON.stringify({
 			gameState: flag
 		}));
-		currentFlag = flag;
 	}, [flag, myUnityContext]);
 
 	return (
@@ -75,14 +73,14 @@ export default function WebGLStarter() {
 						<div className="rotate">
 							<img width={100} height={100} src={propeller} alt="propellar"></img>
 						</div>
-						<div className="waiting-font">WAITING FOR NEXT ROUND</div>
+						<div className="waiting-font">EN ATTENTE DU PROCHAIN TOUR</div>
 						<div className="waiting">
 							<div style={{ width: `${(5000 - waiting) * 100 / 5000}%` }}></div>
 						</div>
 					</div>
 				) : (
 					<div className={`crashtext ${GameState === "GAMEEND" && "red"}`}>
-						{GameState === "GAMEEND" && <div className="flew-away">FLEW AWAY!</div>}
+						{GameState === "GAMEEND" && <div className="flew-away">L'AVION S'EST ENVOLÉ !</div>}
 						<div>
 							{target - 0.01 >= 1 ? Number(target - 0.01).toFixed(2) : "1.00"} <span className="font-[900]">x</span>
 						</div>
