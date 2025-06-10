@@ -8,7 +8,7 @@ import Context from "../../context";
 
 
 export default function WebGLStarter() {
-	const { GameState, currentNum, time, unityState, myUnityContext,setCurrentTarget } = React.useContext(Context)
+	const { GameState, currentNum, time, myUnityContext,setCurrentTarget } = React.useContext(Context)
 	const [target, setTarget] = React.useState(1);
 	const [waiting, setWaiting] = React.useState(0);
 	const [flag, setFlag] = React.useState(1);
