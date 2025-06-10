@@ -20,17 +20,13 @@ export default function WebGLStarter() {
 
 	React.useEffect(() => {
 		let myInterval;
+		console.log("GameState changed to:", GameState);
 
 		if (GameState === "PLAYING") {
 			setFlag(2);
 			const startTime = Date.now() - time;
 			myInterval = setInterval(() => {
 				const newTarget = calculateMultiplier(startTime);
-				if (newTarget > 2 && flag === 2) {
-					setFlag(3);
-				} else if (newTarget > 10 && flag === 3) {
-					setFlag(4);
-				}
 				setTarget(newTarget);
 				setCurrentTarget(newTarget);
 			}, 20);
@@ -43,7 +39,6 @@ export default function WebGLStarter() {
 			const startWaiting = Date.now() - time;
 			setTarget(1);
 			setCurrentTarget(1);
-
 			myInterval = setInterval(() => {
 				setWaiting(Date.now() - startWaiting);
 			}, 20);
@@ -54,9 +49,10 @@ export default function WebGLStarter() {
 				clearInterval(myInterval);
 			}
 		};
-	}, [GameState, unityState, time, currentNum, setCurrentTarget])
+	}, [GameState, time, currentNum, setCurrentTarget])
 
 	React.useEffect(() => {
+		console.log("Sending flag to Unity:", flag);
 		myUnityContext?.sendMessage("GameManager", "RequestToken", JSON.stringify({
 			gameState: flag
 		}));

@@ -292,8 +292,9 @@ export const Provider = ({ children }: any) => {
       setHistory(history);
     });
 
-    socket.on("gameState", (gameState: GameStatusType) => {
-      setGameState(gameState);
+    socket.on("gameState", (newGameState: GameStatusType) => {
+      console.log("New GameState received:", newGameState);
+      setGameState(newGameState);
     });
 
     socket.on("previousHand", (previousHand: UserType[]) => {
@@ -397,46 +398,30 @@ export const Provider = ({ children }: any) => {
   }, [socket, state, userBetState]);
 
   React.useEffect(() => {
-    if (gameState.GameState === "BET") {
+    if (gameState.GameState === "BET" && (userBetState.fbetState || userBetState.sbetState)) {
       const processBet = (type: 'f' | 's') => {
         if (!userBetState[`${type}betState`]) return;
 
-        let newAutoCound = state[`${type}autoCound`];
-        let newAutoState = state.userInfo[type].auto;
-
-        if (newAutoState) {
-          if (newAutoCound > 0) {
-            newAutoCound -= 1;
-          } else {
-            newAutoState = false;
-          }
-        }
-
-        if (state.userInfo.balance < state.userInfo[type].betAmount) {
+        const betAmount = state.userInfo[type].betAmount;
+        if (state.userInfo.balance < betAmount) {
           toast.error("Your balance is not enough");
           updateUserBetState({ [`${type}betState`]: false, [`${type}betted`]: false });
           return;
         }
 
         const data = {
-          betAmount: state.userInfo[type].betAmount,
+          betAmount: betAmount,
           target: state.userInfo[type].target,
           type,
-          auto: newAutoState,
+          auto: state.userInfo[type].auto,
         };
 
         socket.emit("playBet", data);
 
         update({
-          ...state,
-          [`${type}autoCound`]: newAutoCound,
           userInfo: {
             ...state.userInfo,
-            balance: state.userInfo.balance - state.userInfo[type].betAmount,
-            [type]: {
-              ...state.userInfo[type],
-              auto: newAutoState,
-            }
+            balance: state.userInfo.balance - betAmount,
           }
         });
 
@@ -446,8 +431,12 @@ export const Provider = ({ children }: any) => {
         });
       };
 
-      processBet('f');
-      processBet('s');
+      if (userBetState.fbetState) {
+        processBet('f');
+      }
+      if (userBetState.sbetState) {
+        processBet('s');
+      }
     }
   }, [gameState.GameState, userBetState.fbetState, userBetState.sbetState]);
 
