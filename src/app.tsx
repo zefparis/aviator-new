@@ -10,8 +10,8 @@ import Context from "./context";
 // import "./App.scss";
 
 function App() {
-  const { unityLoading, currentProgress, rechargeState } =
-    React.useContext(Context);
+  const { state } = React.useContext(Context);
+  const { unityLoading, currentProgress, rechargeState } = state;
   return (
     <div className="main-container">
       {!unityLoading && (

@@ -13,16 +13,14 @@ type BetOptType = '500' | '1000' | '2500' | '5000'
 type GameType = 'manual' | 'auto'
 
 const Bet = ({ index, add, setAdd }: BetProps) => {
-	const context = React.useContext(Context)
-	const { state,
+	const { state, dispatch, update, updateUserBetState } = React.useContext(Context)
+	const {
 		fbetted, sbetted,
 		fbetState, sbetState,
 		GameState,
 		minBet, maxBet,
 		currentTarget,
-		update,
-		updateUserBetState
-	} = context;
+	} = state;
 	const [cashOut, setCashOut] = React.useState(2);
 
 	const auto = index === 'f' ? state.userInfo.f.auto : state.userInfo.s.auto
@@ -48,55 +46,51 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 		let value = state;
 		if (type === "betAmount") {
 			if (betAmount - 0.1 < minBet) {
-				value.userInfo[index][type] = minBet
+				dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: minBet } } } })
 			} else {
-				value.userInfo[index][type] = Number((Number(betAmount) - 1).toFixed(2))
+				dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: Number((Number(betAmount) - 1).toFixed(2)) } } } })
 			}
 		} else {
 			if (value[`${index + type}`] - 0.1 < 0.1) {
-				value[`${index + type}`] = 0.1
+				dispatch({ type: 'UPDATE_STATE', payload: { [`${index + type}`]: 0.1 } })
 			} else {
-				value[`${index + type}`] = Number((Number(value[`${index + type}`]) - 0.1).toFixed(2))
+				dispatch({ type: 'UPDATE_STATE', payload: { [`${index + type}`]: Number((Number(state[`${index + type}`]) - 0.1).toFixed(2)) } })
 			}
 		}
-		update(value);
 	}
 
 	const plus = (type: FieldNameType) => {
 		let value = state;
 		if (type === "betAmount") {
 			if (value.userInfo[index][type] + 0.1 > state.userInfo.balance) {
-				value.userInfo[index][type] = Math.round(state.userInfo.balance * 100) / 100
+				dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: Math.round(state.userInfo.balance * 100) / 100 } } } })
 			} else {
 				if (value.userInfo[index][type] + 0.1 > maxBet) {
-					value.userInfo[index][type] = maxBet;
+					dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: maxBet } } } })
 				} else {
-					value.userInfo[index][type] = Number((Number(betAmount) + 0.1).toFixed(2))
+					dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: Number((Number(betAmount) + 0.1).toFixed(2)) } } } })
 				}
 			}
 		} else {
 			if (value[`${index + type}`] + 0.1 > state.userInfo.balance) {
-				value[`${index + type}`] = Math.round(state.userInfo.balance * 100) / 100
+				dispatch({ type: 'UPDATE_STATE', payload: { [`${index + type}`]: Math.round(state.userInfo.balance * 100) / 100 } })
 			} else {
-				value[`${index + type}`] = Number((Number(value[`${index + type}`]) + 0.1).toFixed(2))
+				dispatch({ type: 'UPDATE_STATE', payload: { [`${index + type}`]: Number((Number(state[`${index + type}`]) + 0.1).toFixed(2)) } })
 			}
 		}
-		update(value);
 	}
 
 	const manualPlus = (amount: number, btnNum: BetOptType) => {
-		let value = state
 		if (betOpt === btnNum) {
 			if (Number((betAmount + amount)) > maxBet) {
-				value.userInfo[index].betAmount = maxBet
+				dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: maxBet } } } })
 			} else {
-				value.userInfo[index].betAmount = Number((betAmount + amount).toFixed(2))
+				dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: Number((betAmount + amount).toFixed(2)) } } } })
 			}
 		} else {
-			value.userInfo[index].betAmount = Number(Number(amount).toFixed(2))
+			dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, [index]: { ...state.userInfo[index], betAmount: Number(Number(amount).toFixed(2)) } } } })
 			setBetOpt(btnNum);
 		}
-		update(value);
 	}
 
 	const changeBetType = (e: GameType) => {
