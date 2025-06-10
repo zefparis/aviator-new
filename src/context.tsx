@@ -403,11 +403,11 @@ export const Provider = ({ children }: any) => {
         if (!userBetState[`${type}betState`]) return;
 
         const betAmount = state.userInfo[type].betAmount;
-        if (state.userInfo.balance < betAmount) {
-          toast.error("Your balance is not enough");
-          updateUserBetState({ [`${type}betState`]: false, [`${type}betted`]: false });
-          return;
-        }
+        // if (state.userInfo.balance < betAmount) {
+        //   toast.error("Your balance is not enough");
+        //   updateUserBetState({ [`${type}betState`]: false, [`${type}betted`]: false });
+        //   return;
+        // }
 
         const data = {
           betAmount: betAmount,
