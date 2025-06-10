@@ -193,7 +193,35 @@ const reducer = (state: AppState, action: Action): AppState => {
 // --- CONTEXT ---
 const Context = React.createContext<{ state: AppState; dispatch: React.Dispatch<Action>, myUnityContext: any, getMyBets: () => void, callCashOut: (at: number, index: "f" | "s") => void, update: (attrs: Partial<AppState>) => void, updateUserBetState: (attrs: Partial<UserStatusType>) => void, setCurrentTarget: (target: number) => void }>(null!);
 
-const socket = io(config.wss);
+console.log('Tentative de connexion au serveur WebSocket:', config.wss);
+
+const socket = io(config.wss, {
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 3000,
+  timeout: 20000,
+  transports: ['websocket', 'polling'],
+  autoConnect: true,
+  forceNew: true
+});
+
+// Log des événements de connexion
+socket.on('connect', () => {
+  console.log('Connecté au serveur WebSocket avec succès');
+  console.log('ID de socket:', socket.id);
+});
+
+socket.on('connect_error', (error) => {
+  console.error('Erreur de connexion WebSocket:', error);
+});
+
+socket.on('disconnect', (reason) => {
+  console.log('Déconnecté du serveur WebSocket. Raison:', reason);
+});
+
+socket.on('error', (error) => {
+  console.error('Erreur WebSocket:', error);
+});
 
 export const callCashOut = (at: number, index: "f" | "s") => {
   let data = { type: index, endTarget: at };
