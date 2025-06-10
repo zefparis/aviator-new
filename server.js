@@ -36,32 +36,6 @@ if (process.env.NODE_ENV === 'production') {
 const PORT = process.env.PORT || 4000;
 
 // Start the server
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-// Gestion des connexions WebSocket
-io.on('connection', (socket) => {
-  console.log('Nouveau client connecté:', socket.id);
-
-  // Gérer les déconnexions
-  socket.on('disconnect', () => {
-    console.log('Client déconnecté:', socket.id);
-  });
-
-  // Gérer les erreurs
-  socket.on('error', (error) => {
-    console.error('Erreur de socket:', error);
-  });
-
-  // Exemple d'événement personnalisé
-  socket.on('cashOut', (data) => {
-    console.log('Reçu un cashOut:', data);
-    // Traiter le cashOut ici
-  });
-});
-
-const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
-  console.log(`Serveur WebSocket en cours d'exécution sur le port ${PORT}`);
 });
