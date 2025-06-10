@@ -202,7 +202,12 @@ export const callCashOut = (at: number, index: "f" | "s") => {
 
 export const Provider = ({ children }: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { unityProvider, sendMessage, addEventListener, removeEventListener } = useUnityContext({
+  const { 
+    unityProvider, 
+    sendMessage, 
+    addEventListener, 
+    removeEventListener
+  } = useUnityContext({
     loaderUrl: "unity/AirCrash.loader.js",
     dataUrl: "unity/AirCrash.data.unityweb",
     frameworkUrl: "unity/AirCrash.framework.js.unityweb",
@@ -237,30 +242,75 @@ export const Provider = ({ children }: any) => {
   }, [addEventListener, removeEventListener]);
 
   useEffect(() => {
-    socket.on("connect", () => {
+    // Gestionnaire de connexion
+    const handleConnect = () => {
       console.log("Socket connected:", socket.connected);
       socket.emit("enterRoom", { token });
-    });
+    };
+
+    // Gestionnaire de démarrage du jeu
+    const handleStartGame = (payload: any) => {
+      console.log("Game started with payload:", payload);
+      dispatch({ type: 'SET_GAME_STATE', payload: { GameState: "PLAYING" } });
+      // Envoyer un message à Unity pour démarrer l'animation
+      if (sendMessage) {
+        sendMessage("GameManager", "StartGame");
+      }
+    };
+
+    // Gestionnaire d'erreurs de connexion
+    const handleConnectError = (error: any) => {
+      console.error("Erreur de connexion au serveur:", error);
+      toast.error("Impossible de se connecter au serveur de jeu");
+    };
+
+    // Gestionnaire de déconnexion
+    const handleDisconnect = (reason: string) => {
+      console.log("Déconnecté du serveur:", reason);
+      if (reason === "io server disconnect") {
+        // La déconnexion a été initiée par le serveur, on se reconnecte
+        socket.connect();
+      }
+    };
+
+    // Configuration des écouteurs d'événements
+    socket.on("connect", handleConnect);
+    socket.on("startGame", handleStartGame);
+    socket.on("connect_error", handleConnectError);
+    socket.on("disconnect", handleDisconnect);
+    
+    // Autres écouteurs d'événements
     socket.on("bettedUserInfo", (payload) => dispatch({ type: 'SET_BETTED_USERS', payload }));
     socket.on("myBetState", (user) => dispatch({ type: 'SET_USER_BET_STATE', payload: { fbetState: false, fbetted: user.f.betted, sbetState: false, sbetted: user.s.betted } }));
     socket.on("myInfo", (user) => dispatch({ type: 'SET_USER_INFO', payload: { balance: user.balance, userType: user.userType, userName: user.userName } }));
     socket.on("history", (payload) => dispatch({ type: 'SET_HISTORY', payload }));
-    socket.on("gameState", (payload) => dispatch({ type: 'SET_GAME_STATE', payload }));
+    socket.on("gameState", (payload) => {
+      console.log("Game state updated:", payload);
+      dispatch({ type: 'SET_GAME_STATE', payload });
+    });
     socket.on("previousHand", (payload) => dispatch({ type: 'SET_PREVIOUS_HAND', payload }));
     socket.on("finishGame", (user) => {
-        dispatch({ type: 'SET_USER_INFO', payload: user });
-        dispatch({ type: 'SET_USER_BET_STATE', payload: { fbetted: false, sbetted: false } });
+      dispatch({ type: 'SET_USER_INFO', payload: user });
+      dispatch({ type: 'SET_USER_BET_STATE', payload: { fbetted: false, sbetted: false } });
     });
     socket.on("getBetLimits", (payload) => dispatch({ type: 'SET_BET_LIMITS', payload }));
     socket.on("recharge", () => dispatch({ type: 'SET_RECHARGE_STATE', payload: true }));
     socket.on("error", (data) => {
+      console.error("Erreur du serveur:", data);
       dispatch({ type: 'SET_USER_BET_STATE', payload: { [`${data.index}betted`]: false } });
-      toast.error(data.message);
+      toast.error(data.message || "Une erreur est survenue");
     });
-    socket.on("success", (data) => toast.success(data));
+    socket.on("success", (data) => {
+      console.log("Succès:", data);
+      toast.success(data);
+    });
 
+    // Nettoyage des écouteurs lors du démontage du composant
     return () => {
-      socket.off("connect");
+      socket.off("connect", handleConnect);
+      socket.off("startGame", handleStartGame);
+      socket.off("connect_error", handleConnectError);
+      socket.off("disconnect", handleDisconnect);
       socket.off("bettedUserInfo");
       socket.off("myBetState");
       socket.off("myInfo");
@@ -273,7 +323,7 @@ export const Provider = ({ children }: any) => {
       socket.off("error");
       socket.off("success");
     };
-  }, [token]);
+  }, [token, sendMessage, addEventListener, removeEventListener]);
 
   useEffect(() => {
     if (state.GameState === "BET" && (state.fbetState || state.sbetState)) {
@@ -281,11 +331,20 @@ export const Provider = ({ children }: any) => {
         if (!state[`${type}betState`]) return;
 
         const betAmount = state.userInfo[type].betAmount;
-        // if (state.userInfo.balance < betAmount) {
-        //   toast.error("Your balance is not enough");
-        //   dispatch({ type: 'SET_USER_BET_STATE', payload: { [`${type}betState`]: false, [`${type}betted`]: false } });
-        //   return;
-        // }
+        
+        // Vérifier que le montant du pari est valide
+        if (isNaN(betAmount) || betAmount <= 0) {
+          toast.error("Montant de pari invalide");
+          dispatch({ type: 'SET_USER_BET_STATE', payload: { [`${type}betState`]: false, [`${type}betted`]: false } });
+          return;
+        }
+
+        // Vérifier le solde
+        if (state.userInfo.balance < betAmount) {
+          toast.error("Votre solde est insuffisant");
+          dispatch({ type: 'SET_USER_BET_STATE', payload: { [`${type}betState`]: false, [`${type}betted`]: false } });
+          return;
+        }
 
         const data = {
           betAmount: betAmount,
@@ -294,16 +353,55 @@ export const Provider = ({ children }: any) => {
           auto: state.userInfo[type].auto,
         };
 
-        socket.emit("playBet", data);
-
-        dispatch({ type: 'UPDATE_STATE', payload: { userInfo: { ...state.userInfo, balance: state.userInfo.balance - betAmount } } });
-        dispatch({ type: 'SET_USER_BET_STATE', payload: { [`${type}betState`]: false, [`${type}betted`]: true } });
+        console.log("Envoi du pari:", data);
+        
+        // Émettre l'événement de pari avec un callback de confirmation
+        socket.emit("playBet", data, (response: { status: boolean, message?: string } = { status: false }) => {
+          console.log("Réponse du serveur pour le pari:", response);
+          
+          if (response && response.status) {
+            // Mettre à jour le solde uniquement si le serveur a confirmé le pari
+            dispatch({ 
+              type: 'UPDATE_STATE', 
+              payload: { 
+                userInfo: { 
+                  ...state.userInfo, 
+                  balance: state.userInfo.balance - betAmount 
+                } 
+              } 
+            });
+            
+            dispatch({ 
+              type: 'SET_USER_BET_STATE', 
+              payload: { 
+                [`${type}betState`]: false, 
+                [`${type}betted`]: true 
+              } 
+            });
+            
+            toast.success("Pari placé avec succès!");
+          } else {
+            // En cas d'erreur, réinitialiser l'état du pari
+            const errorMessage = response.message || "Erreur lors du placement du pari";
+            console.error(errorMessage);
+            toast.error(errorMessage);
+            
+            dispatch({ 
+              type: 'SET_USER_BET_STATE', 
+              payload: { 
+                [`${type}betState`]: false, 
+                [`${type}betted`]: false 
+              } 
+            });
+          }
+        });
       };
 
+      // Traiter les paris pour chaque type (f ou s)
       if (state.fbetState) processBet('f');
       if (state.sbetState) processBet('s');
     }
-  }, [state.GameState, state.fbetState, state.sbetState]);
+  }, [state.GameState, state.fbetState, state.sbetState, state.userInfo, dispatch]);
 
   const getMyBets = async () => {
     try {
