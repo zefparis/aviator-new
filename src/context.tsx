@@ -178,8 +178,6 @@ let fDecreaseAmount = 0;
 let sIncreaseAmount = 0;
 let sDecreaseAmount = 0;
 
-let newState;
-let newBetState;
 
 export const Provider = ({ children }: any) => {
   const {
@@ -196,7 +194,6 @@ export const Provider = ({ children }: any) => {
   const token = new URLSearchParams(useLocation().search).get("cert");
   const [state, setState] = React.useState<ContextDataType>(init_state);
 
-  newState = state;
   const [unity, setUnity] = React.useState({
     unityState: false,
     unityLoading: false,
@@ -221,7 +218,6 @@ export const Provider = ({ children }: any) => {
     sbetState: false,
     sbetted: false,
   });
-  newBetState = userBetState;
   const [rechargeState, setRechargeState] = React.useState(false);
   const [currentTarget, setCurrentTarget] = React.useState(0);
   const updateUserBetState = (attrs: Partial<UserStatusType>) => {
