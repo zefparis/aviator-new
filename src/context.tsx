@@ -248,7 +248,8 @@ export const Provider = ({ children }: any) => {
     socket.on("gameState", (payload) => dispatch({ type: 'SET_GAME_STATE', payload }));
     socket.on("previousHand", (payload) => dispatch({ type: 'SET_PREVIOUS_HAND', payload }));
     socket.on("finishGame", (user) => {
-        // This logic needs to be carefully reviewed and implemented with the new state management
+        dispatch({ type: 'SET_USER_INFO', payload: user });
+        dispatch({ type: 'SET_USER_BET_STATE', payload: { fbetted: false, sbetted: false } });
     });
     socket.on("getBetLimits", (payload) => dispatch({ type: 'SET_BET_LIMITS', payload }));
     socket.on("recharge", () => dispatch({ type: 'SET_RECHARGE_STATE', payload: true }));
