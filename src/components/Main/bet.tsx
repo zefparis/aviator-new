@@ -289,7 +289,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 									<label>CASHOUT</label>
 									<label className="amount">
 										<span>{Number(betAmount * currentTarget).toFixed(2)}</span>
-										<span className="currency">INR</span>
+										<span className="currency">CDF</span>
 									</label>
 								</span>
 							</button>
@@ -306,7 +306,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 									<label>BET</label>
 									<label className="amount">
 										<span>{Number(betAmount).toFixed(2)}</span>
-										<span className="currency">INR</span>
+										<span className="currency">CDF</span>
 									</label>
 								</span>
 							</button>
@@ -333,9 +333,8 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 									<label id={`${index}-auto-cashout-label`} className="label">Auto Cash Out</label>
 									{betted || betState ? (
 										<button
+											type="button"
 											aria-labelledby={`${index}-auto-cashout-label`}
-											role="switch"
-											aria-checked={autoCashoutState}
 											disabled
 											className={`input-switch ${autoCashoutState ? "" : "off"}`}
 										>
@@ -343,9 +342,8 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 										</button>
 									) : (
 										<button
+											type="button"
 											aria-labelledby={`${index}-auto-cashout-label`}
-											role="switch"
-											aria-checked={autoCashoutState}
 											onClick={() => { update({ [`${index}autoCashoutState`]: !autoCashoutState }) }}
 											className={`input-switch ${autoCashoutState ? "" : "off"}`}
 										>
@@ -412,8 +410,6 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 								</div>
 								<div className="content-part">
 									<button
-										role="switch"
-										aria-checked={deState}
 										onClick={() => {
 											update({ [`${index}deState`]: !deState, [`${index}decrease`]: 0 });
 										}}
@@ -450,12 +446,10 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 												</div>
 											</div>}
 									</div>
-									<span >INR</span>
+									<span >CDF</span>
 								</div>
 								<div className="content-part">
 									<button
-										role="switch"
-										aria-checked={inState}
 										onClick={() => {
 											update({ [`${index}inState`]: !inState, [`${index}increase`]: 0 });
 										}}
@@ -490,12 +484,10 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 											</div>
 										</div>}
 									</div>
-									<span >INR</span>
+									<span >CDF</span>
 								</div>
 								<div className="content-part">
 									<button
-										role="switch"
-										aria-checked={single}
 										onClick={() => {
 											update({ [`${index}single`]: !single, [`${index}singleAmount`]: 0 });
 										}}
@@ -534,7 +526,7 @@ const Bet = ({ index, add, setAdd }: BetProps) => {
 											</div>
 										}
 									</div>
-									<span >INR</span>
+									<span >CDF</span>
 								</div>
 							</div>
 							<div className="modal-footer">

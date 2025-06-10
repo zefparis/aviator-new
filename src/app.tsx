@@ -2,11 +2,11 @@ import React from "react";
 import Header from "./components/header";
 import BetsUsers from "./components/bet-users";
 import Main from "./components/Main";
+import Payment from "./components/Payment";
 // import { useCrashContext } from "./components/Main/context";
 import propeller from "./assets/images/propeller.png";
 
 import Context from "./context";
-import { ContactMeTelegram } from "./components/cTelegram";
 // import "./App.scss";
 
 function App() {
@@ -14,7 +14,6 @@ function App() {
     React.useContext(Context);
   return (
     <div className="main-container">
-      <ContactMeTelegram />
       {!unityLoading && (
         <div className="myloading">
           <div className="loading-container">
@@ -47,6 +46,7 @@ function App() {
         <BetsUsers />
         <Main />
       </div>
+      <Payment />
     </div>
   );
 }

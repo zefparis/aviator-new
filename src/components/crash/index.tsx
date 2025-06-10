@@ -14,26 +14,26 @@ export default function WebGLStarter() {
 	const [waiting, setWaiting] = React.useState(0);
 	const [flag, setFlag] = React.useState(1);
 
+	const calculateMultiplier = (startTime) => {
+		const currentTime = (Date.now() - startTime) / 1000;
+		return 1 + 0.06 * currentTime + Math.pow((0.06 * currentTime), 2) - Math.pow((0.04 * currentTime), 3) + Math.pow((0.04 * currentTime), 4);
+	}
+
 	React.useEffect(() => {
 		let myInterval;
+
 		if (GameState === "PLAYING") {
 			setFlag(2);
-			let startTime = Date.now() - time;
-			let currentTime;
-			let currentNum;
-			const getCurrentTime = (e) => {
-				currentTime = (Date.now() - startTime) / 1000;
-				currentNum = 1 + 0.06 * currentTime + Math.pow((0.06 * currentTime), 2) - Math.pow((0.04 * currentTime), 3) + Math.pow((0.04 * currentTime), 4);
-				if (currentNum > 2 && e === 2) {
+			const startTime = Date.now() - time;
+			myInterval = setInterval(() => {
+				const newTarget = calculateMultiplier(startTime);
+				if (newTarget > 2 && currentFlag === 2) {
 					setFlag(3);
-				} else if (currentNum > 10 && e === 3) {
+				} else if (newTarget > 10 && currentFlag === 3) {
 					setFlag(4);
 				}
-				setTarget(currentNum);
-				setCurrentTarget(currentNum);
-			}
-			myInterval = setInterval(() => {
-				getCurrentTime(currentFlag);
+				setTarget(newTarget);
+				setCurrentTarget(newTarget);
 			}, 20);
 		} else if (GameState === "GAMEEND") {
 			setFlag(5);
@@ -41,7 +41,7 @@ export default function WebGLStarter() {
 			setTarget(currentNum);
 		} else if (GameState === "BET") {
 			setFlag(1);
-			let startWaiting = Date.now() - time;
+			const startWaiting = Date.now() - time;
 			setTarget(1);
 			setCurrentTarget(1);
 
@@ -49,8 +49,13 @@ export default function WebGLStarter() {
 				setWaiting(Date.now() - startWaiting);
 			}, 20);
 		}
-		return () => clearInterval(myInterval);
-	}, [GameState, unityState])
+
+		return () => {
+			if (myInterval) {
+				clearInterval(myInterval);
+			}
+		};
+	}, [GameState, unityState, time, currentNum, setCurrentTarget])
 
 	React.useEffect(() => {
 		myUnityContext?.sendMessage("GameManager", "RequestToken", JSON.stringify({
