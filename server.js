@@ -1,55 +1,62 @@
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
 const path = require('path');
-const cors = require('cors');
+const { Server } = require('socket.io');
 
+// Create Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
 
-// Middleware
-app.use(cors());
+// Basic middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from React build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
+// Simple test route
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Initialize WebSocket server with minimal config
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  },
+  path: '/socket.io/'
+});
+
+// Simple WebSocket connection handler
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
   
-  // Handle React routing, return all requests to React app
-  app.get('*', (req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-      return next();
-    }
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+  
+  socket.emit('message', { type: 'connected', id: socket.id });
+});
+
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const staticPath = path.join(__dirname, 'build');
+  app.use(express.static(staticPath));
+  
+  // Handle SPA routing - must be the last route
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
 
-// Initialize WebSocket server
-const io = new Server(server, {
-  cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://your-railway-url.railway.app', 'https://www.yourdomain.com']
-      : '*',
-    methods: ['GET', 'POST']
-  },
-  path: '/socket.io/' // Explicit WebSocket path
-});
-
-// Import WebSocket handlers
-require('./ws-server')(io);
-
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
+  console.error('Global error handler:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Set port from environment variable or default to 4000
+// Start server
 const PORT = process.env.PORT || 4000;
-
-// Start the server
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-  console.log('WebSocket server initialized');
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
